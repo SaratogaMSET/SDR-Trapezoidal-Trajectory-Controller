@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import org.usfirst.frc.team649.robot.commands.Drive;
+import org.usfirst.frc.team649.robot.commands.TrajectoryDrive;
 import org.usfirst.frc.team649.robot.subsystems.Table;
 
 /**
@@ -55,7 +55,7 @@ public class Robot extends IterativeRobot {
 	     */
 	    public void disabledInit() {
 	    	Scheduler.getInstance().removeAll();
-	    	new Drive(0).start();
+	    	new TrajectoryDrive(0).start();
 	    	table.reset();
 	    }
 

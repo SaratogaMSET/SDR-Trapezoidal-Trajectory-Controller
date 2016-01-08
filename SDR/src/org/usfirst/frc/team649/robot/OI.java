@@ -12,8 +12,8 @@ public class OI {
     //// CREATING BUTTONS
  
     public OI() {
-     	SmartDashboard.putData("Drive 10", new Drive(10));
-    	SmartDashboard.putData("Drive -10", new Drive(-10));
+     	SmartDashboard.putData("Drive 10", new TrajectoryDrive(10));
+    	SmartDashboard.putData("Drive -10", new TrajectoryDrive(-10));
     }
 
 }
