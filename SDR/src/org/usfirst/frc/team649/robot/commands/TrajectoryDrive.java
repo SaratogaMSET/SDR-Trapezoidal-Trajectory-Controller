@@ -8,7 +8,7 @@ import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.Table;
 import org.usfirst.frc.team649.robot.util.Trajectory;
 import org.usfirst.frc.team649.robot.util.TrajectoryFollower;
-import org.usfirst.frc.team649.robot.util.TrapezoidController;
+import org.usfirst.frc.team649.robot.util.TrapezoidalTrajectoryGenerator;
 
 /**
  *
@@ -19,7 +19,7 @@ public class TrajectoryDrive extends Command {
 	double kTurn = -3.0 / 80.0;
 	Trajectory trajectory;
 	TrajectoryFollower follower;
-	TrapezoidController path;
+	TrapezoidalTrajectoryGenerator path;
 
 	public TrajectoryDrive() {
 		init();
@@ -62,7 +62,7 @@ public class TrajectoryDrive extends Command {
 		// double setpoint = Robot.table.getPosition() + distance;
 		// Robot.table.setSetpoint(setpoint);
 		//
-		path = new TrapezoidController(dist, vel, accel);
+		path = new TrapezoidalTrajectoryGenerator(dist, vel, accel);
 		
 		setTrajectory(path);
 	}

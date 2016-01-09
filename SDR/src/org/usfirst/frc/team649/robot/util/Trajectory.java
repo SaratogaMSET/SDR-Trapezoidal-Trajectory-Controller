@@ -1,20 +1,20 @@
 package org.usfirst.frc.team649.robot.util;
 
+import java.util.ArrayList;
+
 public class Trajectory {
 
 	public static class Segment {
-		public double pos, vel, acc, jerk, direction, dt;
+		public double pos, vel, acc, direction, dt;
 
 		public Segment() {
 
 		}
 
-		public Segment(double pos, double vel, double acc, double jerk,
-				double direction, double dt) {
+		public Segment(double pos, double vel, double acc, double direction, double dt) {
 			this.pos = pos;
 			this.vel = vel;
 			this.acc = acc;
-			this.jerk = jerk;
 			this.direction = direction;
 			this.dt = dt;
 
@@ -24,28 +24,28 @@ public class Trajectory {
 			pos = to_copy.pos;
 			vel = to_copy.vel;
 			acc = to_copy.acc;
-			jerk = to_copy.jerk;
 			direction = to_copy.direction;
 			dt = to_copy.dt;
 		}
 
 		public String toString() {
-			return "pos: " + pos + "; vel: " + vel + "; acc: " + acc
-					+ "; jerk: " + jerk + "; direction: " + direction;
+			return "pos: " + pos + "; vel: " + vel + "; acc: " + acc + "; direction: " + direction;
 		}
 	}
 
-	Segment[] segments_ = null;
+	ArrayList<Trajectory.Segment> segments = new ArrayList<Trajectory.Segment>(0);
+	
+//	Segment[] segments_ = null;
 
 	public Trajectory(int length) {
-		segments_ = new Segment[length];
+		segments = new ArrayList<Trajectory.Segment>(length);
 		for (int i = 0; i < length; ++i) {
-			segments_[i] = new Segment();
+			segments.set(i, new Segment());
 		}
 	}
 
-	public Trajectory(Segment[] segments) {
-		segments_ = segments;
+	public Trajectory(ArrayList<Trajectory.Segment> segs) {
+		segments = new ArrayList<Trajectory.Segment>(segs);
 	}
 
 	public int getNumSegments() {
@@ -71,7 +71,6 @@ public class Trajectory {
 			segments_[i].pos *= scaling_factor;
 			segments_[i].vel *= scaling_factor;
 			segments_[i].acc *= scaling_factor;
-			segments_[i].jerk *= scaling_factor;
 		}
 	}
 
@@ -87,6 +86,10 @@ public class Trajectory {
 		}
 
 		this.segments_ = temp;
+	}
+	
+	public void appendSegment(Trajectory.Segment to_append) {
+		
 	}
 
 	public Trajectory copy() {
@@ -111,7 +114,6 @@ public class Trajectory {
 			str += segment.pos + "\t";
 			str += segment.vel + "\t";
 			str += segment.acc + "\t";
-			str += segment.jerk + "\t";
 			str += segment.direction + "\t";
 			str += "\n";
 		}

@@ -1,12 +1,11 @@
 package org.usfirst.frc.team649.robot.util;
 
-public class TrapezoidController {
+public class TrapezoidalTrajectoryGenerator {
 	double t1, t2, t3, d1, d2, d3, maxAccel, maxVelocity, distance, upperBaseDist;
 	
 	public static void main(String[] args) {
-		TrapezoidController controller = new TrapezoidController(200, 20, 40);
+		TrapezoidalTrajectoryGenerator controller = new TrapezoidalTrajectoryGenerator(200, 20, 40);
 		
-		double elapsedTime = 0;
 		
 		for (int i = 0; i < 1000; i++) {
 			System.out.println("time: " + elapsedTime + " d: " + controller.getDistance(elapsedTime) + " a: " + controller.getAccel(elapsedTime) + " v: " + controller.getVelocity(elapsedTime));
@@ -14,25 +13,34 @@ public class TrapezoidController {
 		}
 	}
 	//TODO Assumes same accel and deaccel rate
-	public TrapezoidController(double distance, double maxAccel, double maxVelocity) {
+	public TrapezoidalTrajectoryGenerator(double distance, double maxAccel, double maxVelocity) {
 		this.maxAccel = maxAccel;
 		this.maxVelocity = maxVelocity;
 		this.distance = distance;
 		
-		calculate();
-		
-		//TODO smart way to calculate this
-		while (upperBaseDist < 0) {
-			this.maxVelocity *= 0.8;
-			this.maxAccel *= 0.9;
-			calculate();
-		}
-		
-		System.out.println("t1: " + t1 + " t2: " + t2 + " t3: " + t3);
-		System.out.println("d1: " + d1 + " d2: " + d2 + " d3: " + d3);
 	}
 	
-	public void calculate() {
+	public Trajectory calculateTrajectory() {
+		double elapsedTime = 0;
+		
+		Trajectory t = new Trajectory(0);
+		Trajectory.Segment seg = new Trajectory.Segment();
+		
+		while(seg.pos != distance) {
+			seg = calculateSegment();
+			t.append();
+		}
+		
+	}
+	
+	public Trajectory.Segment calculateSegment() {
+		
+		if(upperBaseDist < 0) {
+			this.maxVelocity *= 0.8;
+			this.maxAccel *= 0.9;
+			calculateSegment();
+		}
+		
 		t1 = maxVelocity / maxAccel;	//v = u + at; t = v/a
 		d1 = 0.5 * t1 * t1 * maxAccel;	//s = 0.5a(t)^2
 		
@@ -44,6 +52,8 @@ public class TrapezoidController {
 		
 		t3 = t1 + t2;
 		d3 = d1 + d2;
+		Trajectory.Segment seg = new Trajectory.Segment(this.getDistance(time), vel, acc, direction, dt)
+		return null;
 	}
 	
 	public double getAccel(double time) {
