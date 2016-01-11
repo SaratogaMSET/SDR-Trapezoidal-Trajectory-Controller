@@ -49,12 +49,12 @@ public class Trajectory {
 	}
 
 	public int getNumSegments() {
-		return segments_.length;
+		return segments.size();
 	}
 
 	public Segment getSegment(int index) {
 		if (index < getNumSegments()) {
-			return segments_[index];
+			return segments.get(index);
 		} else {
 			return new Segment();
 		}
@@ -62,15 +62,20 @@ public class Trajectory {
 
 	public void setSegment(int index, Segment segment) {
 		if (index < getNumSegments()) {
-			segments_[index] = segment;
+			segments.set(index, segment);
 		}
 	}
 
 	public void scale(double scaling_factor) {
 		for (int i = 0; i < getNumSegments(); ++i) {
-			segments_[i].pos *= scaling_factor;
-			segments_[i].vel *= scaling_factor;
-			segments_[i].acc *= scaling_factor;
+			//TODO check this.
+			segments.get(i).pos *= scaling_factor;
+			segments.get(i).vel *= scaling_factor;
+			segments.get(i).acc *= scaling_factor;
+
+//			segments_[i].pos *= scaling_factor;
+//			segments_[i].vel *= scaling_factor;
+//			segments_[i].acc *= scaling_factor;
 		}
 	}
 
