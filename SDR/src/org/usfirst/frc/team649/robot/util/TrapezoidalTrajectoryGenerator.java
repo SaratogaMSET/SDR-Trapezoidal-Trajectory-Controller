@@ -1,35 +1,41 @@
 package org.usfirst.frc.team649.robot.util;
 
+import edu.wpi.first.wpilibj.Timer;
+
 public class TrapezoidalTrajectoryGenerator {
-	double t1, t2, t3, d1, d2, d3, maxAccel, maxVelocity, distance, upperBaseDist;
+	double t1, t2, t3, d1, d2, d3, maxAccel, maxVelocity, distance, upperBaseDist, direction;
+	static Timer time;
+	Trajectory t;
 	
-	public static void main(String[] args) {
-		TrapezoidalTrajectoryGenerator controller = new TrapezoidalTrajectoryGenerator(200, 20, 40);
-		
-		
-		for (int i = 0; i < 1000; i++) {
-			System.out.println("time: " + elapsedTime + " d: " + controller.getDistance(elapsedTime) + " a: " + controller.getAccel(elapsedTime) + " v: " + controller.getVelocity(elapsedTime));
-			elapsedTime += controller.t3 / 1000;
-		}
-	}
 	//TODO Assumes same accel and deaccel rate
-	public TrapezoidalTrajectoryGenerator(double distance, double maxAccel, double maxVelocity) {
+	public TrapezoidalTrajectoryGenerator(double distance, double maxVelocity, double maxAccel) {
 		this.maxAccel = maxAccel;
 		this.maxVelocity = maxVelocity;
 		this.distance = distance;
-		
+		time = new Timer();		
 	}
 	
 	public Trajectory calculateTrajectory() {
-		double elapsedTime = 0;
+		time.reset();
+		time.start();
 		
-		Trajectory t = new Trajectory(0);
+		//double elapsedTime = 0;
+		
+		t = new Trajectory(0);
 		Trajectory.Segment seg = new Trajectory.Segment();
+		
+		if(distance > 0) {
+			direction = 1.0;
+		} else {
+			direction = -1.0;
+		}
 		
 		while(seg.pos != distance) {
 			seg = calculateSegment();
-			t.append();
+			t.appendSegment(seg);
 		}
+		
+		return t;
 		
 	}
 	
@@ -52,8 +58,12 @@ public class TrapezoidalTrajectoryGenerator {
 		
 		t3 = t1 + t2;
 		d3 = d1 + d2;
-		Trajectory.Segment seg = new Trajectory.Segment(this.getDistance(time), vel, acc, direction, dt)
-		return null;
+		double segmentTime = time.get();
+		
+		Trajectory.Segment seg = new Trajectory.Segment(this.getDistance(segmentTime), 
+				this.getVelocity(segmentTime), this.getAccel(segmentTime), direction, segmentTime/t.getNumSegments());
+
+		return seg;
 	}
 	
 	public double getAccel(double time) {

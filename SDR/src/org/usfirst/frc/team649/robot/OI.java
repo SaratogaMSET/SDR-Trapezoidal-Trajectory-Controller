@@ -1,6 +1,8 @@
 package org.usfirst.frc.team649.robot;
 
 import org.usfirst.frc.team649.robot.commands.*;
+
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -10,10 +12,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class OI {
     //// CREATING BUTTONS
- 
+	Joystick joy;
+	
     public OI() {
-     	SmartDashboard.putData("Drive 10", new TrajectoryDrive(10));
-    	SmartDashboard.putData("Drive -10", new TrajectoryDrive(-10));
+      joy = new Joystick(0);
     }
 
 }

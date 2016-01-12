@@ -55,7 +55,6 @@ public class Robot extends IterativeRobot {
 	     */
 	    public void disabledInit() {
 	    	Scheduler.getInstance().removeAll();
-	    	new TrajectoryDrive(0).start();
 	    	table.reset();
 	    }
 

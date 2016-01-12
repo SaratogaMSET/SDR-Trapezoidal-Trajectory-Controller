@@ -11,7 +11,8 @@ public class Trajectory {
 
 		}
 
-		public Segment(double pos, double vel, double acc, double direction, double dt) {
+		public Segment(double pos, double vel, double acc, double direction,
+				double dt) {
 			this.pos = pos;
 			this.vel = vel;
 			this.acc = acc;
@@ -29,13 +30,15 @@ public class Trajectory {
 		}
 
 		public String toString() {
-			return "pos: " + pos + "; vel: " + vel + "; acc: " + acc + "; direction: " + direction;
+			return "pos: " + pos + "; vel: " + vel + "; acc: " + acc
+					+ "; direction: " + direction;
 		}
 	}
 
-	ArrayList<Trajectory.Segment> segments = new ArrayList<Trajectory.Segment>(0);
-	
-//	Segment[] segments_ = null;
+	ArrayList<Trajectory.Segment> segments = new ArrayList<Trajectory.Segment>(
+			0);
+
+	// Segment[] segments_ = null;
 
 	public Trajectory(int length) {
 		segments = new ArrayList<Trajectory.Segment>(length);
@@ -66,47 +69,44 @@ public class Trajectory {
 		}
 	}
 
+	public ArrayList<Trajectory.Segment> getSegmentArrayList() {
+		return segments;
+	}
+
 	public void scale(double scaling_factor) {
 		for (int i = 0; i < getNumSegments(); ++i) {
-			//TODO check this.
+			// TODO check this.
 			segments.get(i).pos *= scaling_factor;
 			segments.get(i).vel *= scaling_factor;
 			segments.get(i).acc *= scaling_factor;
 
-//			segments_[i].pos *= scaling_factor;
-//			segments_[i].vel *= scaling_factor;
-//			segments_[i].acc *= scaling_factor;
+			// segments_[i].pos *= scaling_factor;
+			// segments_[i].vel *= scaling_factor;
+			// segments_[i].acc *= scaling_factor;
 		}
 	}
 
 	public void append(Trajectory to_append) {
-		Segment[] temp = new Segment[getNumSegments()
-				+ to_append.getNumSegments()];
-
-		for (int i = 0; i < getNumSegments(); ++i) {
-			temp[i] = new Segment(segments_[i]);
-		}
-		for (int i = 0; i < to_append.getNumSegments(); ++i) {
-			temp[i + getNumSegments()] = new Segment(to_append.getSegment(i));
-		}
-
-		this.segments_ = temp;
+		segments.addAll(to_append.getSegmentArrayList());
 	}
-	
+
 	public void appendSegment(Trajectory.Segment to_append) {
-		
+		segments.add(to_append);
 	}
 
 	public Trajectory copy() {
-		Trajectory cloned = new Trajectory(getNumSegments());
-		cloned.segments_ = copySegments(this.segments_);
+		Trajectory cloned = new Trajectory(deepCopySegments(segments));
+		 
+		cloned.deepCopySegments(this.segments);
 		return cloned;
 	}
 
-	private Segment[] copySegments(Segment[] tocopy) {
-		Segment[] copied = new Segment[tocopy.length];
-		for (int i = 0; i < tocopy.length; ++i) {
-			copied[i] = new Segment(tocopy[i]);
+	private ArrayList<Trajectory.Segment> deepCopySegments(ArrayList<Trajectory.Segment> tocopy) {
+		ArrayList<Trajectory.Segment> copied = new ArrayList<Trajectory.Segment>(tocopy.size());
+	
+		//TODO check for OBE
+		for (int i = 0; i < tocopy.size(); i++) {
+			copied.set(i, new Segment(tocopy.get(i)));
 		}
 		return copied;
 	}

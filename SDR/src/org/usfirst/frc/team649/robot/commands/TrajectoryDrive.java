@@ -1,11 +1,8 @@
 package org.usfirst.frc.team649.robot.commands;
 
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.subsystems.Table;
 import org.usfirst.frc.team649.robot.util.Trajectory;
 import org.usfirst.frc.team649.robot.util.TrajectoryFollower;
 import org.usfirst.frc.team649.robot.util.TrapezoidalTrajectoryGenerator;
@@ -19,13 +16,18 @@ public class TrajectoryDrive extends Command {
 	double kTurn = -3.0 / 80.0;
 	Trajectory trajectory;
 	TrajectoryFollower follower;
-	TrapezoidalTrajectoryGenerator path;
+	TrapezoidalTrajectoryGenerator pathGenerator;
 
 	public TrajectoryDrive() {
 		init();
 	}
 
+	public TrajectoryDrive(double dist, double maxVel, double maxAccel) {
+		pathGenerator = new TrapezoidalTrajectoryGenerator(dist, maxVel, maxAccel);
+		init();
+	}
 	private void init() {
+		//set constants
 		follower.configure(.25, 0, 0, 1.0 / 15.0, 1.0 / 34.0);
 	}
 
@@ -40,31 +42,10 @@ public class TrajectoryDrive extends Command {
 		this.direction = direction;
 	}
 
-	private void reset() {
-		follower.reset();
-		Robot.table.reset();
-	}
-
-	public int getFollowerCurrentSegment() {
-		return follower.getCurrentSegment();
-	}
-
-	public int getNumSegments() {
-		return follower.getNumSegments();
-	}
-
-	public void setTrajectory(Trajectory t) {
-		this.trajectory = t;
-	}
-
 	// Called just before this Command runs the first time
-	protected void initialize(double dist, double vel, double accel) {
-		// double setpoint = Robot.table.getPosition() + distance;
-		// Robot.table.setSetpoint(setpoint);
-		//
-		path = new TrapezoidalTrajectoryGenerator(dist, vel, accel);
-		
-		setTrajectory(path);
+	protected void initialize() {
+		Trajectory t = pathGenerator.calculateTrajectory();
+		this.setTrajectory(t);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -84,8 +65,26 @@ public class TrajectoryDrive extends Command {
 		Robot.table.setPower(0.0);
 	}
 
+	private void reset() {
+		follower.reset();
+		Robot.table.reset();
+	}
+
+	public int getFollowerCurrentSegment() {
+		return follower.getCurrentSegment();
+	}
+
+	public int getNumSegments() {
+		return follower.getNumSegments();
+	}
+
+	public void setTrajectory(Trajectory t) {
+		this.trajectory = t;
+	}
+	
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	protected void interrupted() {
 	}
+
 }
