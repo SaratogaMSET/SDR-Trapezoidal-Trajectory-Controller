@@ -15,6 +15,7 @@ import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -25,14 +26,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Table extends Subsystem {
    
-    DigitalInput rightHallEffect = RobotMap.tablerightHallEffect;
-    DigitalInput leftHallEffect = RobotMap.tableleftHallEffect;
-    Encoder encoder = RobotMap.tableencoder;
-    SpeedController motor = RobotMap.tablemotor;
+    public Encoder encoder; 
+    SpeedController motor;
+    public Encoder halEffect;
 
    
     public Table() {
-    	RobotMap.init();
+    	encoder = new Encoder(RobotMap.encoderForwardChannel, RobotMap.encoderReverseChannel, false, EncodingType.k2X);
+    	encoder.setDistancePerPulse(0.00942);
+    	motor = new Talon(RobotMap.tableMotorPort);
+    	//halEffect = new Encoder(aSource, bSource)
     }
     
     public void initDefaultCommand() {
@@ -45,7 +48,7 @@ public class Table extends Subsystem {
     }
     
     public double getDistance() {
-    	return encoder.getDistance();
+    	return -encoder.getDistance();
     }
     
     public void setPower(double pwr) {

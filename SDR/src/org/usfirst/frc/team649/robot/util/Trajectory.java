@@ -35,8 +35,7 @@ public class Trajectory {
 		}
 	}
 
-	ArrayList<Trajectory.Segment> segments = new ArrayList<Trajectory.Segment>(
-			0);
+	ArrayList<Trajectory.Segment> segments = new ArrayList<Trajectory.Segment>(0);
 
 	// Segment[] segments_ = null;
 

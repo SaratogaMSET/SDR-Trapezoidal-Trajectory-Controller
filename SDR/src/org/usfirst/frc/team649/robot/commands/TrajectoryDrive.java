@@ -1,6 +1,7 @@
 package org.usfirst.frc.team649.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.util.Trajectory;
@@ -17,20 +18,25 @@ public class TrajectoryDrive extends Command {
 	Trajectory trajectory;
 	TrajectoryFollower follower;
 	TrapezoidalTrajectoryGenerator pathGenerator;
+	double power;
 
 	public TrajectoryDrive() {
 		init();
 	}
 
 	public TrajectoryDrive(double dist, double maxVel, double maxAccel) {
+		//feed system limitiations to new trajectory generator
 		pathGenerator = new TrapezoidalTrajectoryGenerator(dist, maxVel, maxAccel);
+		follower = new TrajectoryFollower("SDR Motion Profile Controller");
 		init();
 	}
 	private void init() {
-		//set constants
-		follower.configure(.25, 0, 0, 1.0 / 15.0, 1.0 / 34.0);
+		//set constants kp, ki, kd, kvel, kaccel
+		
+		follower.configure(.0, 0.00, 0.00, .5, .25);
 	}
 
+	//load a motion profile for the Trajectory Follower to follow.
 	public void loadProfile(Trajectory profile, double direction) {
 		reset();
 		follower.setTrajectory(profile);
@@ -42,21 +48,33 @@ public class TrajectoryDrive extends Command {
 		this.direction = direction;
 	}
 
-	// Called just before this Command runs the first time
+	// create and set a trajectory to follow
 	protected void initialize() {
 		Trajectory t = pathGenerator.calculateTrajectory();
 		this.setTrajectory(t);
+		
 	}
 
-	// Called repeatedly when this Command is scheduled to run
+	// Calculate power to set based off where we are in the trajectory
 	protected void execute() {
-		double distance = direction * Robot.table.getDistance();
-		double speed = direction * follower.calculate(distance);
-		Robot.table.setPower(speed);
+		double distance =  Robot.table.getDistance();
+		power = follower.calculate(distance);
+		
+		if(power > .5) {
+			power = .5; 
+		} 
+		if(power < -.5) {
+			power = -.5;
+		}	
+		SmartDashboard.putNumber("power", power);
+
+		Robot.table.setPower(power);
+		
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
+		
 		return follower.isFinishedTrajectory();
 	}
 
@@ -79,7 +97,7 @@ public class TrajectoryDrive extends Command {
 	}
 
 	public void setTrajectory(Trajectory t) {
-		this.trajectory = t;
+		follower.setTrajectory(t);
 	}
 	
 	// Called when another command which requires one or more of the same
