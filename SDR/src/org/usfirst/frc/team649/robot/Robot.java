@@ -1,12 +1,16 @@
 package org.usfirst.frc.team649.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team649.robot.commands.LeverArmPID;
 import org.usfirst.frc.team649.robot.commands.TrajectoryDrive;
+import org.usfirst.frc.team649.robot.subsystems.LeverArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.Table;
 
 /**
@@ -18,9 +22,24 @@ import org.usfirst.frc.team649.robot.subsystems.Table;
  */
 public class Robot extends IterativeRobot {
 
+	//SB added for testing absolute encoder
+	//public AnalogInput absoluteEncoder;
+	
+	public static LeverArmSubsystem leverArmSubsystem;
+	
 	public static boolean debug = false;
 	public static OI oi;
-	public static Table table;;
+	public static Table table;
+	
+	public static boolean isLeverPIDRunning = false;
+	
+	public boolean prevState11Button;
+	public boolean prevState12Button;
+	
+	//public Victor leverPivot;
+	
+//	public static double MAX_ABS_ENCODER_VAL = 4.5;
+//	public static double MIN_ABS_ENCODER_VAL = 0.5;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -30,7 +49,15 @@ public class Robot extends IterativeRobot {
 		
 		table = new Table();
 		oi = new OI();
-
+		
+		leverArmSubsystem = new LeverArmSubsystem();
+		
+		prevState11Button = false;
+		prevState12Button = false;
+//		
+//		leverPivot = new Victor(1);
+//		
+//		absoluteEncoder = new AnalogInput(0);
 	}
 
 	/**
@@ -78,11 +105,47 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 		SmartDashboard.putNumber("Enc", table.getDistance());
 		if (oi.joy.getRawButton(1)) {
-			new TrajectoryDrive(10, 10, 2).start();
+			//new TrajectoryDrive(10, 10, 2).start();
 		}
 		if(oi.joy.getRawButton(7)) {
 			table.reset();
 		}
+		
+		//*********************JOYSTICK LEVER ARM************************//
+		//correct for range on lever arm
+		double armPowerVal = Math.abs(oi.joy.getY()) > 0.1 ? -oi.joy.getY()/3.0 : 0;
+		
+		//make sure the pid isnt running
+		if (!isLeverPIDRunning){
+			//keep it within range
+			if (leverArmSubsystem.withinRange() || 
+					(leverArmSubsystem.absoluteEncoder.getVoltage() > leverArmSubsystem.MAX_ABS_ENCODER_VAL && armPowerVal < 0) ||
+							(leverArmSubsystem.absoluteEncoder.getVoltage() < leverArmSubsystem.MIN_ABS_ENCODER_VAL && armPowerVal > 0) ){
+				leverArmSubsystem.leverPivot.set(armPowerVal);
+			}
+			else{
+				leverArmSubsystem.leverPivot.set(0);
+			}
+		}
+		
+		
+		//lever arm PID control
+		if (oi.joy.getRawButton(11) && !prevState11Button){
+			new LeverArmPID(0.5, LeverArmSubsystem.RELATIVE).start();
+		}
+		else if (oi.joy.getRawButton(12) && !prevState12Button){
+			new LeverArmPID(-0.5, LeverArmSubsystem.RELATIVE).start();
+		}
+		
+		
+		
+		//PREV STATES
+		prevState11Button = oi.joy.getRawButton(11);
+		prevState12Button = oi.joy.getRawButton(12);
+		
+		//SMART DASHBOARD
+		SmartDashboard.putData("Absolute Encoder", leverArmSubsystem.absoluteEncoder);
+		SmartDashboard.putNumber("Absolute Encoder getAverageVoltage", leverArmSubsystem.absoluteEncoder.getAverageVoltage());
 	}
 
 	/**
