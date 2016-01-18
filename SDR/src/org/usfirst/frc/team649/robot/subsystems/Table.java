@@ -27,15 +27,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Table extends Subsystem {
    
     public Encoder encoder; 
-    SpeedController motor;
+    public CANTalon motor;
     public Encoder halEffect;
 
    
     public Table() {
     	encoder = new Encoder(RobotMap.encoderForwardChannel, RobotMap.encoderReverseChannel, false, EncodingType.k2X);
     	encoder.setDistancePerPulse(0.00942);
-    	motor = new Talon(RobotMap.tableMotorPort);
+    	motor = new CANTalon(0); //ID from RoboRIO web interface
+    	
     	//halEffect = new Encoder(aSource, bSource)
+    	motor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
     }
     
     public void initDefaultCommand() {

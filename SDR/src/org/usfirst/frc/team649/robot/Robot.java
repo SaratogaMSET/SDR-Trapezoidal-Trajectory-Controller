@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -111,9 +112,12 @@ public class Robot extends IterativeRobot {
 			table.reset();
 		}
 		
+		//deadzone for SDR
+		table.setPower(Math.abs(oi.joy.getY()) > 0.1 ? -oi.joy.getY()/1.3 : 0);
+		
 		//*********************JOYSTICK LEVER ARM************************//
-		//correct for range on lever arm
-		double armPowerVal = Math.abs(oi.joy.getY()) > 0.1 ? -oi.joy.getY()/3.0 : 0;
+		//correct for range on lever arm **0 right now for testing SDR
+		double armPowerVal = 0;//Math.abs(oi.joy.getY()) > 0.1 ? -oi.joy.getY()/3.0 : 0;
 		
 		//make sure the pid isnt running
 		if (!isLeverPIDRunning){
