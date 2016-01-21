@@ -105,6 +105,11 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		SmartDashboard.putNumber("Enc", table.getDistance());
+		SmartDashboard.putNumber("CAN ENCPOSITION", table.motor.getEncPosition());
+		SmartDashboard.putNumber("CAN GETPOSITION", table.motor.getPosition());
+		SmartDashboard.putNumber("CAN GET", table.motor.get());
+		
+		
 		if (oi.joy.getRawButton(1)) {
 			//new TrajectoryDrive(10, 10, 2).start();
 		}
