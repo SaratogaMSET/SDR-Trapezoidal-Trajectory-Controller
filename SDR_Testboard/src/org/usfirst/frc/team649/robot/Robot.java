@@ -1,19 +1,17 @@
+
 package org.usfirst.frc.team649.robot;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.usfirst.frc.team649.robot.commands.LeverArmPID;
-import org.usfirst.frc.team649.robot.commands.TrajectoryDrive;
 import org.usfirst.frc.team649.robot.commands.VelPID;
 import org.usfirst.frc.team649.robot.subsystems.LeverArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.Table;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
