@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class LeverArmSubsystem extends PIDSubsystem {
    
-    public static double P_CONST = 0.8;
+    public static double P_CONST = 0.3;
 	public static double I_CONST = 0.01;
 	public static double D_CONST = 0;
 	
@@ -54,12 +54,13 @@ public class LeverArmSubsystem extends PIDSubsystem {
     }
     
     
-    public boolean withinRange(){
-    	double val = getAbsoluteEncoderDistance();
-		return val < MAX_ABS_ENCODER_VAL && val > MIN_ABS_ENCODER_VAL;
+    public boolean pastMax(){
+		return getAbsoluteEncoderDistance() > MAX_ABS_ENCODER_VAL;
 	}
     
-    
+    public boolean pastMin() {
+    	return getAbsoluteEncoderDistance() < MIN_ABS_ENCODER_VAL;
+    }
     public void initDefaultCommand() {
  
     }

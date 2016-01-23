@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+import java.security.acl.LastOwnerException;
+
 import org.usfirst.frc.team649.robot.commands.LeverArmPID;
 import org.usfirst.frc.team649.robot.commands.VelPID;
 import org.usfirst.frc.team649.robot.subsystems.LeverArmSubsystem;
@@ -54,6 +57,7 @@ public class Robot extends IterativeRobot {
 		
 		prevState11Button = false;
 		prevState12Button = false;
+		//SmartDashboard.this.
 //		
 //		leverPivot = new Victor(1);
 //		
@@ -123,28 +127,26 @@ public class Robot extends IterativeRobot {
 		
 		//*********************JOYSTICK LEVER ARM*** *********************//
 		//correct for range on lever arm **0 right now for testing SDR
-		double armPowerVal = 0;//Math.abs(oi.joy.getY()) > 0.1 ? -oi.joy.getY()/3.0 : 0;
+		double armPowerVal = Math.abs(oi.joy.getY()) > 0.1 ? -oi.joy.getY()/2.0 : 0;
 		
 		//make sure the pid isnt running
 		if (!isLeverPIDRunning){
 			//keep it within range
-			if (leverArmSubsystem.withinRange() || 
-					(leverArmSubsystem.absoluteEncoder.getVoltage() > leverArmSubsystem.MAX_ABS_ENCODER_VAL && armPowerVal < 0) ||
-							(leverArmSubsystem.absoluteEncoder.getVoltage() < leverArmSubsystem.MIN_ABS_ENCODER_VAL && armPowerVal > 0) ){
+			if(leverArmSubsystem.pastMax() && armPowerVal < 0) {
+				leverArmSubsystem.leverPivot.set(0);
+			} else if(leverArmSubsystem.pastMin() && armPowerVal > 0) {
+				leverArmSubsystem.leverPivot.set(0);
+			} else {
 				leverArmSubsystem.leverPivot.set(armPowerVal);
 			}
-			else{
-				leverArmSubsystem.leverPivot.set(0);
-			}
-		}
-		
-		
+		}	
+			
 		//lever arm PID control
 		if (oi.joy.getRawButton(11) && !prevState11Button){
-			new LeverArmPID(0.5, LeverArmSubsystem.RELATIVE).start();
+			new LeverArmPID(1.0, !LeverArmSubsystem.RELATIVE).start();
 		}
 		else if (oi.joy.getRawButton(12) && !prevState12Button){
-			new LeverArmPID(-0.5, LeverArmSubsystem.RELATIVE).start();
+			new LeverArmPID(4.0, !LeverArmSubsystem.RELATIVE).start();
 		}
 		
 		

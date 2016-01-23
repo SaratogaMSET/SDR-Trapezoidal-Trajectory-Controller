@@ -54,7 +54,7 @@ public class LeverArmPID extends Command {
 //		SmartDashboard.putBoolean("OutsideMaxDecreasing", outsideMaxDecreasing);
 //		SmartDashboard.putBoolean("OutsideMinIncreasing", outsideMinIncreasing);
 		//make sure we can PID the opposite direction when we cross the MAX or MIN
-		return  !(outsideMaxDecreasing || Robot.leverArmSubsystem.withinRange() || outsideMinIncreasing) || lPID.onTarget();
+		return  !(outsideMaxDecreasing || Robot.leverArmSubsystem.pastMax() || Robot.leverArmSubsystem.pastMin() || outsideMinIncreasing) || lPID.onTarget();
 	}
 
 	@Override
